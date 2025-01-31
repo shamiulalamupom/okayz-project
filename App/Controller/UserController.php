@@ -37,7 +37,38 @@ class UserController extends Controller
             $user = new User();
 
             if (isset($_POST['saveUser'])) {
-                //@todo manage user registration
+                $user->setUsername($_POST['username'] ?? '');
+                $user->setPassword(password_hash($_POST['password'] ?? '', PASSWORD_BCRYPT));
+                $user->setEmail($_POST['email'] ?? '');
+
+                // Validate user data
+                if (empty($user->getUsername())) {
+                    $errors[] = 'Username is required';
+                }
+                if (empty($user->getPassword())) {
+                    $errors[] = 'Password is required';
+                }
+                if (empty($user->getEmail())) {
+                    $errors[] = 'Email is required';
+                } elseif (!filter_var($user->getEmail(), FILTER_VALIDATE_EMAIL)) {
+                    $errors[] = 'Invalid email format';
+                }
+
+                // If no errors, save the user
+                if (empty($errors)) {
+                    $userRepository = new UserRepository();
+                    $userRepository->persist($user);
+                    $this->render('user/success', [
+                        'message' => 'User registered successfully'
+                    ]);
+                    return;
+                }
+
+                $this->render('user/add_edit', [
+                    'user' => $user,
+                    'pageTitle' => 'Register',
+                    'errors' => $errors
+                ]);
             }
 
             $this->render('user/add_edit', [
