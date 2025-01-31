@@ -7,11 +7,9 @@ namespace App\Entity;
 class User extends Entity
 {
     protected ?int $id = null;
+    protected ?string $user_name = '';
     protected ?string $email = '';
     protected ?string $password = '';
-    protected ?string $first_name = '';
-    protected ?string $last_name = '';
-    protected ?string $role = '';
 
     public function getId(): ?int
     {
@@ -49,38 +47,22 @@ class User extends Entity
         return $this;
     }
 
-    public function getFirstName(): ?string
+    /**
+     * Get the value of user_name
+     */ 
+    public function getUserName()
     {
-        return $this->first_name;
+        return $this->user_name;
     }
 
-    public function setFirstName(?string $first_name): self
+    /**
+     * Set the value of user_name
+     *
+     * @return  self
+     */ 
+    public function setUserName($user_name)
     {
-        $this->first_name = $first_name;
-
-        return $this;
-    }
-
-    public function getLastName(): ?string
-    {
-        return $this->last_name;
-    }
-
-    public function setLastName(?string $last_name): self
-    {
-        $this->last_name = $last_name;
-
-        return $this;
-    }
-
-    public function getRole(): ?string
-    {
-        return $this->role;
-    }
-
-    public function setRole(?string $role): self
-    {
-        $this->role = $role;
+        $this->user_name = $user_name;
 
         return $this;
     }
@@ -91,11 +73,8 @@ class User extends Entity
     public function validate(): array
     {
         $errors = [];
-        if (empty($this->getFirstName())) {
+        if (empty($this->getUserName())) {
             $errors['first_name'] = 'First name is required';
-        }
-        if (empty($this->getLastName())) {
-            $errors['last_name'] = 'Last name is required';
         }
         if (empty($this->getEmail())) {
             $errors['email'] = 'Email is required';
@@ -151,5 +130,4 @@ class User extends Entity
     {
         return (isset($_SESSION['user']) && isset($_SESSION['user']['id'])) ? $_SESSION['user']['id']: false;
     }
-
 }
