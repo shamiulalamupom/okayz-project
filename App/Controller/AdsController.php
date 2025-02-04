@@ -2,39 +2,35 @@
 
 namespace App\Controller;
 
-class PageController extends Controller
+use App\Repository\AdsRepository;
+
+class AdsController extends Controller
 {
     public function route(): void
     {
         try {
             if (isset($_GET['action'])) {
                 switch ($_GET['action']) {
-                    case 'home':
-                        //charger controleur home
-                        $this->home();
+                    case 'annonces':
+                        //charger controleur annonces
+                        $this->annonces();
                         break;
                     default:
-                        throw new \Exception("This action does not exist: ".$_GET['action']);
+                        throw new \Exception("This action does not exist : " . $_GET['action']);
                         break;
                 }
             } else {
                 throw new \Exception("Action missing");
             }
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             $this->render('errors/default', [
                 'error' => $e->getMessage()
             ]);
         }
-
     }
 
-    protected function home()
+    protected function annonces()
     {
-
-        // $bookRepository = new BookRepository;
-        // $books = $bookRepository->findAll(_HOME_BOOK_LIMIT_);
-
-        $this->render('page/home');
-
+        $this->render('page/annonces');
     }
 }
