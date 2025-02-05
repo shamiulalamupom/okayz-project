@@ -32,6 +32,7 @@ use App\Tools\NavigationTools;
             <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
                 <li><a href="index.php" class="nav-link px-2 link-secondary <?php NavigationTools::addActiveClass('page', 'home') ?>">Accueil</a></li>
                 <li><a href="index.php<?= NavigationTools::makeRoute('ads', 'annonces') ?>" class="nav-link px-2 <?php NavigationTools::addActiveClass('page', 'annonces') ?>">Annonces</a></li>
+                <li><a href="index.php<?= NavigationTools::makeRoute('chat', 'chats') ?>" class="nav-link px-2 <?php NavigationTools::addActiveClass('chat', 'chats') ?>">Chats</a></li>
             </ul>
 
             <div class="col-md-3 text-end">

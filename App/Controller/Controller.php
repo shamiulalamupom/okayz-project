@@ -23,6 +23,11 @@ class Controller
                         $controller = new AdsController();
                         $controller->route();
                         break;
+                    case 'chat':
+                        //charger controleur chat
+                        $controller = new ChatController();
+                        $controller->route();
+                        break;
                     default:
                         throw new \Exception("Controller does not exist");
                         break;
