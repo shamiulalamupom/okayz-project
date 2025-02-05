@@ -26,7 +26,7 @@ class UserRepository extends Repository
         $query->execute();
         $user = $query->fetch($this->pdo::FETCH_ASSOC);
         if ($user) {
-            return User::createAndHydrate($user);;
+            return User::createAndHydrate($user);
         } else {
             return false;
         }
@@ -36,15 +36,14 @@ class UserRepository extends Repository
     {
         
         if ($user->getId() !== null) {
-                $query = $this->pdo->prepare('UPDATE user SET user_name = :user_name, last_name = :last_name,  
-                                                    email = :email, password = :password  WHERE id = :id'
+                $query = $this->pdo->prepare('UPDATE user SET user_name = :user_name, email = :email, password = :password  WHERE id = :id'
                 );
                 $query->bindValue(':id', $user->getId(), $this->pdo::PARAM_INT);
            
 
         } else {
-            $query = $this->pdo->prepare('INSERT INTO user (user_name, last_name, email, password, role) 
-                                                    VALUES (:user_name, :last_name, :email, :password, :role)'
+            $query = $this->pdo->prepare('INSERT INTO user (user_name, email, password) 
+                                                    VALUES (:user_name, :email, :password)'
             );
 
         }
