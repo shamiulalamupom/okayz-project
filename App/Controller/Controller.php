@@ -18,6 +18,11 @@ class Controller
                         $controller = new UserController();
                         $controller->route();
                         break;
+                    case 'ads':
+                        //charger controleur ads
+                        $controller = new AdsController();
+                        $controller->route();
+                        break;
                     default:
                         throw new \Exception("Controller does not exist");
                         break;

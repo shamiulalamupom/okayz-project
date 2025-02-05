@@ -16,4 +16,8 @@ class NavigationTools
         return '';
     }
 
+    public static function makeRoute($controller, $action)
+    {
+        return "?controller=" . urlencode($controller) . "&action=" . urlencode($action);
+    }
 }
