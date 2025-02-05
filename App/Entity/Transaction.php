@@ -8,7 +8,7 @@ class Transaction extends Entity
     public function __construct(
         protected ?int $id = null,
         protected ?int $date = '',
-        protected ?float $toralPrice = ''
+        protected ?float $totalPrice = ''
     ) {}
 
 
@@ -51,17 +51,17 @@ class Transaction extends Entity
     /**
      * Get the value of toralPrice
      */
-    public function getToralPrice(): ?float
+    public function getTotalPrice(): ?float
     {
-        return $this->toralPrice;
+        return $this->totalPrice;
     }
 
     /**
      * Set the value of toralPrice
      */
-    public function setToralPrice(?float $toralPrice): self
+    public function setTotalPrice(?float $totalPrice): self
     {
-        $this->toralPrice = $toralPrice;
+        $this->totalPrice = $totalPrice;
 
         return $this;
     }
@@ -72,7 +72,7 @@ class Transaction extends Entity
         $transaction = new self();
         $transaction->setId($data['id']);
         $transaction->setDate($data['date']);
-        $transaction->setToralPrice($data['toralPrice']);
+        $transaction->setTotalPrice($data['totalPrice']);
         return $transaction;
     }
 }
