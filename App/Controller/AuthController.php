@@ -39,12 +39,9 @@ class AuthController extends Controller
             if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $email = htmlspecialchars($_POST['email']);
                 $password = htmlspecialchars(trim($_POST['password']));
-                $hash = password_hash('1234', PASSWORD_DEFAULT);
-                var_dump(password_verify('1234', $hash));
                 if (!empty($email) && !empty($password)) {
                     $userRepository = new UserRepository();
                     $user = $userRepository->findOneByEmail($email);
-                    var_dump(password_verify($password, $user->getPassword()));
                     if ($user && $user->verifyPassword($password)) {
                         session_regenerate_id(true);
                         $_SESSION['user'] = [
