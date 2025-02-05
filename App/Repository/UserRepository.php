@@ -34,19 +34,18 @@ class UserRepository extends Repository
 
     public function persist(User $user)
     {
-        
-        if ($user->getId() !== null) {
-                $query = $this->pdo->prepare('UPDATE user SET user_name = :user_name, last_name = :last_name,  
-                                                    email = :email, password = :password  WHERE id = :id'
-                );
-                $query->bindValue(':id', $user->getId(), $this->pdo::PARAM_INT);
-           
 
+        if ($user->getId() !== null) {
+            $query = $this->pdo->prepare(
+                'UPDATE user SET user_name = :user_name, last_name = :last_name,  
+                                                    email = :email, password = :password  WHERE id = :id'
+            );
+            $query->bindValue(':id', $user->getId(), $this->pdo::PARAM_INT);
         } else {
-            $query = $this->pdo->prepare('INSERT INTO user (user_name, last_name, email, password, role) 
+            $query = $this->pdo->prepare(
+                'INSERT INTO user (user_name, last_name, email, password, role) 
                                                     VALUES (:user_name, :last_name, :email, :password, :role)'
             );
-
         }
 
         $query->bindValue(':user_name', $user->getUserName(), $this->pdo::PARAM_STR);

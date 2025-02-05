@@ -16,28 +16,26 @@ class PageController extends Controller
                         $this->home();
                         break;
                     default:
-                        throw new \Exception("This action does not exist: ".$_GET['action']);
+                        throw new \Exception("This action does not exist: " . $_GET['action']);
                         break;
                 }
             } else {
                 throw new \Exception("Action missing");
             }
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             $this->render('errors/default', [
                 'error' => $e->getMessage()
             ]);
         }
-
     }
 
     protected function home()
     {
         $adsRepository = new AdsRepository;
-        $ads = $adsRepository->findLatestThree();
+        $ads = $adsRepository->findAll();
 
         $this->render('page/home', [
-            'ads'=> $ads
+            'ads' => $ads
         ]);
-
     }
 }

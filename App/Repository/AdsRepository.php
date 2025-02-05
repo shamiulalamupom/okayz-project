@@ -8,10 +8,20 @@ use App\Db\Database;
 class AdsRepository extends Repository
 {
 
-    public function findAll(): array
+    public function findAll(?int $limit = null): array
     {
-        $query = self::$pdo->prepare("SELECT * FROM ads");
-        $ads = $query->fetchAll(self::$pdo::FETCH_ASSOC);
+        if ($limit) {
+            $limit = "LIMIT $limit";
+        } else {
+            $limit = "";
+        }
+
+        $query = $this->pdo->prepare("SELECT ads.*, user.*, category.* FROM ads 
+                        LEFT JOIN user ON ads.user_id = user.id
+                        LEFT JOIN category ON ads.category_id = category.id
+                        ORDER BY ads.id ASC $limit");
+        $query->execute();
+        $ads = $query->fetchAll($this->pdo::FETCH_ASSOC);
         $adsList = [];
         foreach ($ads as $ad) {
             $adsList[] = Ads::createAndHydrate($ad);
@@ -19,12 +29,16 @@ class AdsRepository extends Repository
         return $adsList;
     }
 
-    public static function findOneById(int $id)
+    public function findOneById(int $id)
     {
-        $query = self::$pdo->prepare("SELECT * FROM ads WHERE id = :id");
-        $query->bindParam(':id', $id, self::$pdo::PARAM_INT);
+        $query = $this->pdo->prepare("SELECT ads.*, user.*, category.* FROM ads 
+                                        LEFT JOIN user ON ads.user_id = user.id
+                                        LEFT JOIN category ON ads.category_id = category.id
+                                        WHERE id = :id");
+        $query->bindParam(':id', $id, $this->pdo::PARAM_INT);
         $query->execute();
-        $ad = $query->fetch(self::$pdo::FETCH_ASSOC);
+        $ad = $query->fetch($this->pdo::FETCH_ASSOC);
+        var_dump($ad);
         if ($ad) {
             return Ads::createAndHydrate($ad);
         } else {
@@ -33,14 +47,14 @@ class AdsRepository extends Repository
     }
 
 
-    public static function findOneByCategory(string $category)
+    public function findOneByCategory(string $category)
     {
-        $query = self::$pdo->prepare("SELECT * FROM ads WHERE category = :category");
-        $query->bindParam(':category', $category, self::$pdo::PARAM_STR);
+        $query = $this->pdo->prepare("SELECT * FROM ads WHERE category = :category");
+        $query->bindParam(':category', $category, $this->pdo::PARAM_STR);
         $query->execute();
-        $ads = $query->fetch(self::$pdo::FETCH_ASSOC);
+        $ads = $query->fetch($this->pdo::FETCH_ASSOC);
         if ($ads) {
-            return Ads::createAndHydrate($ads);;
+            return Ads::createAndHydrate($ads);
         } else {
             return false;
         }
@@ -84,16 +98,16 @@ class AdsRepository extends Repository
         }
     }
 
-    public function findLatestThree(): array
-    {
-        $query = self::$pdo->prepare("SELECT * FROM ads ORDER BY id DESC LIMIT 3");
-        $ads = $query->fetchAll(self::$pdo::FETCH_ASSOC);
+    // public function findLatestThree(): array
+    // {
+    //     $query = $this->pdo->prepare("SELECT * FROM ads ORDER BY id DESC LIMIT 3");
+    //     $ads = $query->fetchAll($this->pdo::FETCH_ASSOC);
 
-        $adsList = [];
-        foreach ($ads as $ad) {
-            $adsList[] = Ads::createAndHydrate($ad);
-        }
+    //     $adsList = [];
+    //     foreach ($ads as $ad) {
+    //         $adsList[] = Ads::createAndHydrate($ad);
+    //     }
 
-        return $adsList;
-    }
+    //     return $adsList;
+    // }
 }

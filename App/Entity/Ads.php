@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use App\Repository\UserRepository;
+
 class Ads extends Entity
 {
 
@@ -112,10 +114,10 @@ class Ads extends Entity
     {
         return $this->user;
     }
-    
+
     /**
      * Set the value of user
-     */ 
+     */
     public function setUser(?User $user): self
     {
         $this->user = $user;
@@ -128,7 +130,7 @@ class Ads extends Entity
      */
     public function getCategory(): ?Categories
     {
-            return $this->category;
+        return $this->category;
     }
 
     /**
@@ -136,14 +138,14 @@ class Ads extends Entity
      */
     public function setCategory(?Categories $category): self
     {
-            $this->category = $category;
+        $this->category = $category;
 
-            return $this;
+        return $this;
     }
-    
+
 
     public function getImagePath(): string
-    { 
+    {
         if (!empty($this->getImage())) {
             return _ASSETS_IMAGES_FOLDER_ . $this->getImage();
         } else {
