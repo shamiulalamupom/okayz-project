@@ -92,11 +92,7 @@ class User extends Entity
     */
     public function verifyPassword(string $password): bool
     {
-        if (password_verify($password, $this->password)) {
-            return true;
-        } else {
-            return false;
-        }
+        return password_verify($password, $this->password);
     }
 
     /*
