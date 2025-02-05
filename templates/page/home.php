@@ -17,43 +17,20 @@
 
     <div class="row">
         <h2 class="pb-2 border-bottom">Les dernières annonces</h2>
-
-        <div class="col-md-4 my-2 d-flex">
-            <div class="card w-100">
-                <img src="./assets/rocket-league.jpg" class="card-img-top" alt="Rocket League PS4" />
-                <div class="card-body d-flex flex-column">
-                    <h5 class="card-title">Rocket League PS4</h5>
-                    <p class="card-text">25.00 €</p>
-                    <div class="mt-auto">
-                        <a href="#" class="btn btn-primary stretched-link w-100">Voir l'annonce</a>
+        <?php foreach ($ads as $ad): ?>
+            <div class="col-md-4 my-2 d-flex">
+                <div class="card w-100">
+                    <img src="<?= htmlspecialchars($ad->getImagePath()); ?>" class="card-img-top" alt="Rocket League PS4" />
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title"><?= htmlspecialchars($ad->getTitle()); ?></h5>
+                        <p class="card-text"><?= htmlspecialchars($ad->getPrice()); ?> €</p>
+                        <div class="mt-auto">
+                            <a href="#" class="btn btn-primary stretched-link w-100">Voir l'annonce</a>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="col-md-4 my-2 d-flex">
-            <div class="card w-100">
-                <img src="./assets/t-shirt-mario.jpg" class="card-img-top" alt="T-Shirt Mario 1up" />
-                <div class="card-body d-flex flex-column">
-                    <h5 class="card-title">T-Shirt Mario 1up</h5>
-                    <p class="card-text">15.00 €</p>
-                    <div class="mt-auto">
-                        <a href="#" class="btn btn-primary stretched-link w-100">Voir l'annonce</a>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="col-md-4 my-2 d-flex">
-            <div class="card w-100">
-                <img src="./assets/jeu-zelda.jpg" class="card-img-top" alt="The Legend of Zelda: Tears Of The Kingdom Switch" />
-                <div class="card-body d-flex flex-column">
-                    <h5 class="card-title">The Legend of Zelda: Tears Of The Kingdom Switch</h5>
-                    <p class="card-text">35.00 €</p>
-                    <div class="mt-auto">
-                        <a href="#" class="btn btn-primary stretched-link w-100">Voir l'annonce</a>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <?php endforeach; ?>
     </div>
 
     <div class="py-5" id="hanging-icons">

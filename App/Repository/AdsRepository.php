@@ -3,17 +3,28 @@
 namespace App\Repository;
 
 use App\Entity\Ads;
+use App\Db\Database;
 
 class AdsRepository extends Repository
 {
 
+    public function findAll(): array
+    {
+        $query = self::$pdo->prepare("SELECT * FROM ads");
+        $ads = $query->fetchAll(self::$pdo::FETCH_ASSOC);
+        $adsList = [];
+        foreach ($ads as $ad) {
+            $adsList[] = Ads::createAndHydrate($ad);
+        }
+        return $adsList;
+    }
+
     public static function findOneById(int $id)
     {
-        $pdo = self::getPdoInstance();
-        $query = $pdo->prepare("SELECT * FROM ads WHERE id = :id");
-        $query->bindParam(':id', $id, $pdo::PARAM_INT);
+        $query = self::$pdo->prepare("SELECT * FROM ads WHERE id = :id");
+        $query->bindParam(':id', $id, self::$pdo::PARAM_INT);
         $query->execute();
-        $ad = $query->fetch($pdo::FETCH_ASSOC);
+        $ad = $query->fetch(self::$pdo::FETCH_ASSOC);
         if ($ad) {
             return Ads::createAndHydrate($ad);
         } else {
@@ -21,19 +32,13 @@ class AdsRepository extends Repository
         }
     }
 
-    private static function getPdoInstance()
-    {
-        return (new self())->pdo;
-    }
-
 
     public static function findOneByCategory(string $category)
     {
-        $pdo = self::getPdoInstance();
-        $query = $pdo->prepare("SELECT * FROM ads WHERE category = :category");
-        $query->bindParam(':category', $category, $pdo::PARAM_STR);
+        $query = self::$pdo->prepare("SELECT * FROM ads WHERE category = :category");
+        $query->bindParam(':category', $category, self::$pdo::PARAM_STR);
         $query->execute();
-        $ads = $query->fetch($pdo::FETCH_ASSOC);
+        $ads = $query->fetch(self::$pdo::FETCH_ASSOC);
         if ($ads) {
             return Ads::createAndHydrate($ads);;
         } else {
@@ -64,5 +69,31 @@ class AdsRepository extends Repository
 
 
         return $query->execute();
+    }
+
+    public function removeById(int $id)
+    {
+        $query = $this->pdo->prepare('DELETE FROM ads WHERE id = :id');
+        $query->bindParam(':id', $id, $this->pdo::PARAM_INT);
+        return $query->execute();
+
+        if ($query->execute()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public function findLatestThree(): array
+    {
+        $query = self::$pdo->prepare("SELECT * FROM ads ORDER BY id DESC LIMIT 3");
+        $ads = $query->fetchAll(self::$pdo::FETCH_ASSOC);
+
+        $adsList = [];
+        foreach ($ads as $ad) {
+            $adsList[] = Ads::createAndHydrate($ad);
+        }
+
+        return $adsList;
     }
 }

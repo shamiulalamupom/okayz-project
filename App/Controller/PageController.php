@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use App\Repository\AdsRepository;
+
 class PageController extends Controller
 {
     public function route(): void
@@ -30,11 +32,12 @@ class PageController extends Controller
 
     protected function home()
     {
+        $adsRepository = new AdsRepository;
+        $ads = $adsRepository->findLatestThree();
 
-        // $bookRepository = new BookRepository;
-        // $books = $bookRepository->findAll(_HOME_BOOK_LIMIT_);
-
-        $this->render('page/home');
+        $this->render('page/home', [
+            'ads'=> $ads
+        ]);
 
     }
 }

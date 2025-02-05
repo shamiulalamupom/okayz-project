@@ -31,6 +31,16 @@ class AdsController extends Controller
 
     protected function annonces()
     {
-        $this->render('page/annonces');
+        try {
+            $adsRepository = new AdsRepository();
+            $ads = $adsRepository->findAll();
+            $this->render('page/annonces', [
+                'ads' => $ads
+            ]);
+        } catch (\Exception $e) {
+            $this->render('errors/default', [
+                'error' => $e->getMessage()
+            ]);
+        }
     }
 }
