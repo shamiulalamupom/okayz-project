@@ -31,12 +31,31 @@ use App\Tools\NavigationTools;
 
             <ul class="nav col-12 col-md-auto mb-2 justify-content-center mb-md-0">
                 <li><a href="index.php" class="nav-link px-2 link-secondary <?php NavigationTools::addActiveClass('page', 'home') ?>">Accueil</a></li>
-                <li><a href="index.php<?= NavigationTools::makeRoute('ads', 'annonces') ?>" class="nav-link px-2 <?php NavigationTools::addActiveClass('page', 'annonces') ?>">Annonces</a></li>
-                <li><a href="index.php<?= NavigationTools::makeRoute('chat', 'chats') ?>" class="nav-link px-2 <?php NavigationTools::addActiveClass('chat', 'chats') ?>">Chats</a></li>
+                <li><a href=<?= NavigationTools::makeRoute('ads', 'annonces') ?> class="nav-link px-2 <?php NavigationTools::addActiveClass('page', 'annonces') ?>">Annonces</a></li>
             </ul>
 
             <div class="col-md-3 text-end">
-                <a class="btn btn-outline-primary me-2" href="#">Connexion</a>
-                <a class="btn btn-primary" href="#">Inscription</a>
+                <?php if (isset($_SESSION['user'])) : ?>
+                    <a class="btn btn-outline-primary me-2 disabled" href=""><?=$_SESSION['user']['user_name'] ?></a>
+                    <a class="btn btn-primary" href=<?=NavigationTools::makeRoute('auth', 'logout') ?>>Logout</a>
+                <?php else: ?>
+                    <a class="btn btn-outline-primary me-2" href=<?=NavigationTools::makeRoute('auth', 'login') ?>>Connexion</a>
+                    <a class="btn btn-primary" href=<?=NavigationTools::makeRoute('user', 'register') ?>>Inscription</a>
+                <?php endif; ?>
             </div>
         </header>
+        <div>
+            <?php if(isset($errors)): ?>
+                <?php foreach($errors as $error): ?>
+                    <div class="alert alert-danger" role="alert">
+                        <?= $error ?>
+                    </div>
+                <?php endforeach; ?>
+            <?php elseif(isset($messages)): ?>
+                <?php foreach($messages as $message): ?>
+                    <div class="alert alert-success" role="alert">
+                        <?= $message ?>
+                    </div>
+                <?php endforeach; ?>
+            <?php endif; ?>
+        </div>
