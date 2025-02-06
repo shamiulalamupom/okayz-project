@@ -36,10 +36,10 @@ class UserController extends Controller
             $errors = [];
             $user = new User();
 
-            if (isset($_POST['saveUser'])) {
-                $user->setUsername($_POST['username'] ?? '');
-                $user->setPassword(password_hash($_POST['password'] ?? '', PASSWORD_BCRYPT));
-                $user->setEmail($_POST['email'] ?? '');
+            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                $user->setUsername($_POST['username']);
+                $user->setPassword($_POST['password']);
+                $user->setEmail($_POST['email']);
 
                 // Validate user data
                 if (empty($user->getUsername())) {
@@ -58,23 +58,21 @@ class UserController extends Controller
                 if (empty($errors)) {
                     $userRepository = new UserRepository();
                     $userRepository->persist($user);
-                    $this->render('user/success', [
-                        'message' => 'User registered successfully'
+                    $this->render('page/home', [
+                        'messages' => ['User registered successfully']
                     ]);
                     return;
                 }
 
-                $this->render('user/add_edit', [
-                    'user' => $user,
+                $this->render('user/register', [
+                    'user' => '',
                     'pageTitle' => 'Register',
                     'errors' => $errors
                 ]);
             }
 
-            $this->render('user/add_edit', [
-                'user' => '',
+            $this->render('user/register', [
                 'pageTitle' => 'Register',
-                'errors' => ''
             ]);
 
         } catch (\Exception $e) {

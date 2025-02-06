@@ -18,6 +18,6 @@ class NavigationTools
 
     public static function makeRoute($controller, $action)
     {
-        return "?controller=" . urlencode($controller) . "&action=" . urlencode($action);
+        return "index.php?controller=" . urlencode($controller) . "&action=" . urlencode($action);
     }
 }

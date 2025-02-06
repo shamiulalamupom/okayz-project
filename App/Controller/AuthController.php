@@ -31,33 +31,43 @@ class AuthController extends Controller
         }
     }
 
-
     protected function login()
     {
-        $errors = [];
+        try {
+            $errors = [];
 
-        if (isset($_POST['loginUser'])) {
-
-            $userRepository = new UserRepository();
-
-            $user = $userRepository->findOneByEmail($_POST['email']);
-
-            if ($user && $user->verifyPassword($_POST['password'])) {
-                session_regenerate_id(true);
-                $_SESSION['user'] = [
-                    'id' => $user->getId(),
-                    'email' => $user->getEmail(),
-                    'user_name' => $user->getUserName(),
-                ];
-                header('location: index.php');
-            } else {
-                $errors[] = 'Incorrect email or password';
+            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                $email = htmlspecialchars($_POST['email']);
+                $password = htmlspecialchars(trim($_POST['password']));
+                if (!empty($email) && !empty($password)) {
+                    $userRepository = new UserRepository();
+                    $user = $userRepository->findOneByEmail($email);
+                    if ($user && $user->verifyPassword($password)) {
+                        session_regenerate_id(true);
+                        $_SESSION['user'] = [
+                            'id' => $user->getId(),
+                            'email' => $user->getEmail(),
+                            'user_name' => $user->getUserName(),
+                        ];
+                        header('Location: index.php');
+                        exit;
+                    } else {
+                        $errors[] = 'Incorrect email or password';
+                    }
+                } else {
+                    $errors[] = 'Email and password are required';
+                }
             }
-        }
 
-        $this->render('auth/login', [
-            'errors' => $errors,
-        ]);
+            $this->render('auth/login', [
+                'errors' => $errors,
+            ]);
+
+        } catch (\Exception $e) {
+            $this->render('errors/default', [
+                'error' => $e->getMessage()
+            ]);
+        }
     }
 
 
