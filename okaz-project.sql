@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Jan 31, 2025 at 11:05 AM
+-- Generation Time: Feb 06, 2025 at 05:27 PM
 -- Server version: 5.7.40
 -- PHP Version: 8.0.26
 
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `okaz_project`
+-- Database: `okaz-project`
 --
 
 -- --------------------------------------------------------
@@ -36,17 +36,19 @@ CREATE TABLE IF NOT EXISTS `ads` (
   `image` varchar(255) DEFAULT NULL,
   `user_id` int(10) UNSIGNED NOT NULL,
   `category_id` int(10) UNSIGNED NOT NULL,
+  `creation_date` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
   KEY `category_id` (`category_id`),
   KEY `user_id` (`user_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `ads`
 --
 
-INSERT INTO `ads` (`id`, `title`, `description`, `price`, `image`, `user_id`, `category_id`) VALUES
-(1, 'laptop', 'cascascasc', 1009.23, 'ascac', 1, 1);
+INSERT INTO `ads` (`id`, `title`, `description`, `price`, `image`, `user_id`, `category_id`, `creation_date`) VALUES
+(1, 'laptop', 'cascascasc', 1009.23, '', 1, 1, '2025-02-06 17:25:15'),
+(2, 'clothes', 'acadcvdvc', 25.02, NULL, 1, 1, '2025-02-06 17:26:23');
 
 -- --------------------------------------------------------
 
