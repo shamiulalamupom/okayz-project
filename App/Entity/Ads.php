@@ -152,26 +152,4 @@ class Ads extends Entity
             return _ASSETS_IMAGES_FOLDER_ . 'EmptyCart.jpeg';
         }
     }
-
-    public function toArray(): array
-    {
-        return [
-            'id' => $this->getId(),
-            'title' => $this->getTitle(),
-            'description' => $this->getDescription(),
-            'price' => $this->getPrice(),
-            'image' => $this->getImage()
-        ];
-    }
-
-    public static function createAndHydrate(array $data): static
-    {
-        $ads = new self();
-        $ads->setId($data['id']);
-        $ads->setTitle($data['title']);
-        $ads->setDescription($data['description']);
-        $ads->setPrice($data['price']);
-        $ads->setImage($data['image']);
-        return $ads;
-    }
 }

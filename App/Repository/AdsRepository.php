@@ -17,8 +17,8 @@ class AdsRepository extends Repository
         }
 
         $query = $this->pdo->prepare("SELECT ads.*, user.*, category.* FROM ads 
-                        LEFT JOIN user ON ads.user_id = user.id
-                        LEFT JOIN category ON ads.category_id = category.id
+                        JOIN user ON ads.user_id = user.id
+                        JOIN category ON ads.category_id = category.id
                         ORDER BY ads.id ASC $limit");
         $query->execute();
         $ads = $query->fetchAll($this->pdo::FETCH_ASSOC);
@@ -31,13 +31,13 @@ class AdsRepository extends Repository
 
     public function findOneById(int $id)
     {
-        $query = $this->pdo->prepare("SELECT ads.*, user.*, category.* FROM ads 
-                                        LEFT JOIN user ON ads.user_id = user.id
-                                        LEFT JOIN category ON ads.category_id = category.id
-                                        WHERE id = :id");
-        $query->bindParam(':id', $id, $this->pdo::PARAM_INT);
+        $query = self::$pdo->prepare("SELECT ads.*, user.*, category.* FROM ads 
+                        JOIN user ON ads.user_id = user.id
+                        JOIN category ON ads.category_id = category.id
+                        WHERE ads.id = :id");
+        $query->bindParam(':id', $id, \PDO::PARAM_INT);
         $query->execute();
-        $ad = $query->fetch($this->pdo::FETCH_ASSOC);
+        $ad = $query->fetch(\PDO::FETCH_ASSOC);
         var_dump($ad);
         if ($ad) {
             return Ads::createAndHydrate($ad);
@@ -55,6 +55,19 @@ class AdsRepository extends Repository
         $ads = $query->fetch($this->pdo::FETCH_ASSOC);
         if ($ads) {
             return Ads::createAndHydrate($ads);
+        } else {
+            return false;
+        }
+    }
+
+    public function findById(int $id)
+    {
+        $query = $this->pdo->prepare("SELECT * FROM ads WHERE id = :id");
+        $query->bindParam(':id', $id, $this->pdo::PARAM_INT);
+        $query->execute();
+        $ad = $query->fetch($this->pdo::FETCH_ASSOC);
+        if ($ad) {
+            return Ads::createAndHydrate($ad);
         } else {
             return false;
         }

@@ -1,4 +1,7 @@
-<?php require_once _ROOTPATH_ . '/templates/header.php'; ?>
+<?php require_once _ROOTPATH_ . '/templates/header.php';
+
+use App\Tools\NavigationTools;
+?>
 
 <main>
     <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
@@ -25,7 +28,7 @@
                         <h5 class="card-title"><?= htmlspecialchars($ad->getTitle()); ?></h5>
                         <p class="card-text"><?= htmlspecialchars($ad->getPrice()); ?> €</p>
                         <div class="mt-auto">
-                            <a href="#" class="btn btn-primary stretched-link w-100">Voir l'annonce</a>
+                            <a href="<?= NavigationTools::makeRoute("ads", "ad") ?>&id=<?= htmlspecialchars($ad->getId()); ?>" class="btn btn-primary stretched-link w-100">Voir l'annonce</a>
                         </div>
                     </div>
                 </div>
