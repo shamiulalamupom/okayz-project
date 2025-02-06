@@ -8,14 +8,18 @@ use App\Entity\User;
 class TransactionRepository extends Repository
 {
 
-    public static function findOneByTransactionId(int $id)
+    public function findOneByTransactionId(int $id)
     {
-        $query = self::$pdo->prepare("SELECT * FROM transaction WHERE id = :id");
-        $query->bindParam(':id', $id, self::$pdo::PARAM_INT);
+        $query = $this->pdo->prepare("SELECT ads.*, user.*, transaction.* FROM transaction 
+                                        LEFT JOIN user ON transaction.user_id = user.id
+                                        LEFT JOIN ads ON transaction.ads_id = ads.id
+                                        WHERE transaction.id = :id");
+        $query->bindParam(':id', $id, $this->pdo::PARAM_INT);
         $query->execute();
-        $transaction = $query->fetch(self::$pdo::FETCH_ASSOC);
+        $transaction = $query->fetch($this->pdo::FETCH_ASSOC);
         if ($transaction) {
-            return Transaction::createAndHydrate($transaction);;
+            $transactionObject = new Transaction($transaction['id'], $transaction['user_id'], $transaction['ads_id'], $transaction['status']);
+            return $transactionObject;
         } else {
             return false;
         }

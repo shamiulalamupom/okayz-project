@@ -2,6 +2,8 @@
 
 namespace App\Controller;
 
+use App\Repository\AdsRepository;
+
 class PageController extends Controller
 {
     public function route(): void
@@ -14,27 +16,26 @@ class PageController extends Controller
                         $this->home();
                         break;
                     default:
-                        throw new \Exception("This action does not exist: ".$_GET['action']);
+                        throw new \Exception("This action does not exist: " . $_GET['action']);
                         break;
                 }
             } else {
                 throw new \Exception("Action missing");
             }
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             $this->render('errors/default', [
                 'error' => $e->getMessage()
             ]);
         }
-
     }
 
     protected function home()
     {
+        $adsRepository = new AdsRepository;
+        $ads = $adsRepository->findAll();
 
-        // $bookRepository = new BookRepository;
-        // $books = $bookRepository->findAll(_HOME_BOOK_LIMIT_);
-
-        $this->render('page/home');
-
+        $this->render('page/home', [
+            'ads' => $ads
+        ]);
     }
 }

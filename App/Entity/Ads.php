@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use App\Repository\UserRepository;
+
 class Ads extends Entity
 {
 
@@ -10,7 +12,9 @@ class Ads extends Entity
         protected ?string $title = '',
         protected ?string $description = '',
         protected ?float $price = 0,
-        protected ?string $image = ''
+        protected ?string $image = '',
+        protected ?User $user = null,
+        protected ?Categories $category = null
     ) {}
 
     /**
@@ -101,6 +105,52 @@ class Ads extends Entity
         $this->image = $image;
 
         return $this;
+    }
+
+    /**
+     * Get the value of user
+     */
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    /**
+     * Set the value of user
+     */
+    public function setUser(?User $user): self
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
+    /**
+     * Get the value of category
+     */
+    public function getCategory(): ?Categories
+    {
+        return $this->category;
+    }
+
+    /**
+     * Set the value of category
+     */
+    public function setCategory(?Categories $category): self
+    {
+        $this->category = $category;
+
+        return $this;
+    }
+
+
+    public function getImagePath(): string
+    {
+        if (!empty($this->getImage())) {
+            return _ASSETS_IMAGES_FOLDER_ . $this->getImage();
+        } else {
+            return _ASSETS_IMAGES_FOLDER_ . 'EmptyCart.jpeg';
+        }
     }
 
     public function toArray(): array
