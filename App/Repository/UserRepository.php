@@ -34,7 +34,7 @@ class UserRepository extends Repository
 
     public function persist(User $user)
     {
-        
+
         if ($user->getId() !== null) {
                 $query = $this->pdo->prepare('UPDATE user SET user_name = :user_name, email = :email, password = :password  WHERE id = :id'
                 );
@@ -45,7 +45,6 @@ class UserRepository extends Repository
             $query = $this->pdo->prepare('INSERT INTO user (user_name, email, password) 
                                                     VALUES (:user_name, :email, :password)'
             );
-
         }
 
         $query->bindValue(':user_name', $user->getUserName(), $this->pdo::PARAM_STR);
