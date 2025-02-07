@@ -11,7 +11,7 @@ require_once _ROOTPATH_ . '/templates/header.php'; ?>
 
     <div class="row">
         <div class="col-md-3">
-            <form action="annonces.html" method="get">
+            <form method="post">
                 <h2>Filtres</h2>
                 <div class="p-3 border-bottom">
                     <input type="text" name="search" id="search" class="form-control" placeholder="Rechercher" value="" />
@@ -31,9 +31,9 @@ require_once _ROOTPATH_ . '/templates/header.php'; ?>
                     <label for="category">Catégorie</label>
                     <select name="category" id="category" class="form-select">
                         <option value="">-- catégorie --</option>
-                        <option value="1">Jeux vidéo</option>
-                        <option value="3">Mangas</option>
-                        <option value="2">Vêtements</option>
+                        <?php foreach ($categories as $category) : ?>
+                            <option value="<?= $category->getId() ?>"><?= $category->getType() ?></option>
+                        <?php endforeach; ?>
                     </select>
                 </div>
                 <div class="mt-3">

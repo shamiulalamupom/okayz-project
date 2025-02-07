@@ -46,10 +46,25 @@ class AdsController extends Controller
     protected function annonces()
     {
         try {
+            $filters = [];
+
+            // Assuming the form uses GET method
+            if (isset($_POST['category'])) {
+                $filters['type'] = $_POST['category'];
+            }
+            if (isset($_POST['min_price'])) {
+                $filters['min_price'] = (int)$_POST['min_price'];
+            }
+            if (isset($_POST['max_price'])) {
+                $filters['max_price'] = (int)$_POST['max_price'];
+            }
             $adsRepository = new AdsRepository();
-            $ads = $adsRepository->findAll();
+            $ads = $adsRepository->findAll(null, $filters);
+            $categoriesRepository = new CategoryRepository();
+            $categories = $categoriesRepository->findAll();
             $this->render('page/annonces', [
-                'ads' => $ads
+                'ads' => $ads,
+                'categories' => $categories
             ]);
         } catch (\Exception $e) {
             $this->render('errors/default', [

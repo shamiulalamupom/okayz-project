@@ -9,8 +9,28 @@ use App\Db\Database;
 class AdsRepository extends Repository
 {
 
-    public function findAll(?int $limit = null): array
+    public function findAll(?int $limit = null, ?array $filters = null): array
     {
+        $filterConditions = [];
+        $filterValues = [];
+
+        if ($filters) {
+            foreach ($filters as $key => $value) {
+                if($key === 'min_price' && $value !== 0) {
+                    $filterConditions[] = "ads.price >= :$key";
+                    $filterValues[":$key"] = $value;
+                } elseif($key === 'max_price' && $value !== 0) {
+                    $filterConditions[] = "ads.price <= :$key";
+                    $filterValues[":$key"] = $value;
+                } elseif($key === 'category' && $value !== "") {
+                    $filterConditions[] = "category.type = :$key";
+                    $filterValues[":category.type"] = $value;
+                }
+            }
+        }
+
+        $filterString = $filterConditions ? 'WHERE ' . implode(' AND ', $filterConditions) : '';
+
         if ($limit) {
             $limit = "LIMIT $limit";
         } else {
@@ -23,8 +43,12 @@ class AdsRepository extends Repository
                         FROM ads
                         JOIN user ON ads.user_id = user.id
                         JOIN category ON ads.category_id = category.id
+                        $filterString
                         ORDER BY ads.creation_date DESC 
                         $limit");
+        foreach ($filterValues as $key => $value) {
+            $query->bindValue($key, $value);
+        }
         $query->execute();
         $ads = $query->fetchAll($this->pdo::FETCH_ASSOC);
         $adsList = [];
