@@ -8,6 +8,8 @@ use App\Repository\CategoryRepository;
 use App\Entity\User;
 use App\Entity\Ads;
 use App\Entity\Category;
+use App\Repository\TransactionRepository;
+use App\Entity\Transaction;
 use App\Tools\FileTools;
 
 class AdsController extends Controller
@@ -28,6 +30,18 @@ class AdsController extends Controller
                     case 'create':
                         //charger controleur create
                         $this->create();
+                        break;
+                    case 'edit':
+                        //charger controleur edit
+                        $this->edit();
+                        break;
+                    case 'delete':
+                        //charger controleur delete
+                        $this->delete();
+                        break;
+                    case 'buy':
+                        //charger controleur buy
+                        $this->buy();
                         break;
                     default:
                         throw new \Exception("This action does not exist : " . $_GET['action']);
@@ -166,6 +180,130 @@ class AdsController extends Controller
         } catch (\Exception $e) {
             $this->render('errors/default', [
                 'error' => $e->getMessage()
+            ]);
+        }
+    }
+
+    protected function edit() {
+        try {
+            if (!User::isLogged()) {
+                throw new \Exception("You must be logged in to edit an ad.");
+            }
+
+            if (!isset($_GET['id']) || empty($_GET['id'])) {
+                throw new \Exception("Ad ID is missing.");
+            }
+
+            $adsRepository = new AdsRepository();
+            $ad = $adsRepository->findOneById($_GET['id']);
+
+            if (!$ad) {
+                throw new \Exception("Ad not found.");
+            }
+
+            if (User::getCurrentUserId() !== $ad->getUser()->getId()) {
+                throw new \Exception("You are not allowed to edit this ad.");
+            }
+
+            $categoriesRepository = new CategoryRepository();
+            $categories = $categoriesRepository->findAll();
+
+            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                $image = $_FILES['image'] === null ? FileTools::uploadImage(_ASSETS_UPLOAD_FOLDER_, $_FILES['image'])['filename'] : $ad->getImage();
+                $ad->setTitle($_POST['title'] ? $_POST['title'] : $ad->getTitle());
+                $ad->setDescription($_POST['description'] ? $_POST['description'] : $ad->getDescription());
+                $ad->setPrice($_POST['price'] ? $_POST['price'] : $ad->getPrice());
+                $ad->setImage($image);
+                $ad->setCategory($categoriesRepository->findOneByCategoryType($_POST['category'] ? $_POST['category'] : $ad->getCategory()->getType()));
+
+                $adsRepository->persist($ad);
+                header('Location: index.php?controller=ads&action=annonces');
+                return;
+
+                $this->render('ads/create_ad', [
+                    'ad' => $ad,
+                    'pageTitle' => 'Edit Ad',
+                    'categories' => $categories
+                ]);
+            }
+
+            $this->render('ads/create_ad', [
+                'ad' => $ad,
+                'pageTitle' => 'Edit Ad',
+                'categories' => $categories
+            ]);
+        } catch (\Exception $e) {
+            $this->render('errors/default', [
+                'error' => $e->getMessage()
+            ]);
+        }
+    }
+
+    protected function delete()
+    {
+        try {
+            if (!User::isLogged()) {
+                throw new \Exception("You must be logged in to delete an ad.");
+            }
+
+            if (!isset($_GET['id']) || empty($_GET['id'])) {
+                throw new \Exception("Ad ID is missing.");
+            }
+
+            $adsRepository = new AdsRepository();
+            $ad = $adsRepository->findOneById($_GET['id']);
+
+            if (!$ad) {
+                throw new \Exception("Ad not found.");
+            }
+
+            if (User::getCurrentUserId() !== $ad->getUser()->getId()) {
+                throw new \Exception("You are not allowed to delete this ad.");
+            }
+
+            $adsRepository->removeById($ad->getId());
+            header('Location: index.php?controller=ads&action=annonces');
+        } catch (\Exception $e) {
+            $this->render('errors/default', [
+                'error' => $e->getMessage()
+            ]);
+        }
+    }
+
+    protected function buy() {
+        try {
+            if (!User::isLogged()) {
+                throw new \Exception("You must be logged in to buy an ad.");
+            }
+
+            if (!isset($_GET['id']) || empty($_GET['id'])) {
+                throw new \Exception("Ad ID is missing.");
+            }
+
+            $adsRepository = new AdsRepository();
+            $ad = $adsRepository->findOneById($_GET['id']);
+            $ads = $adsRepository->findAll(3);
+
+            $transactionRepository = new TransactionRepository();
+            $transaction = new Transaction();
+            $transaction->setAds($ad);
+            $transaction->setUser(User::getCurrentUser());
+            $transaction->setDate(date('Y-m-d H:i:s'));
+            $transaction->setTotalPrice($ad->getPrice());
+
+
+            if (!$ad) {
+                throw new \Exception("Ad not found.");
+            }
+
+            $transactionRepository->persist($transaction);
+            $this->render('page/home', [
+                'messages' => ['Transaction successful'],
+                'ads' => $ads
+            ]);
+        } catch (\Exception $e) {
+            $this->render('errors/default', [
+            'error' => $e->getMessage()
             ]);
         }
     }

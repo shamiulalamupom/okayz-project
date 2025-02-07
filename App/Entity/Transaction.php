@@ -5,13 +5,11 @@ namespace App\Entity;
 class Transaction extends Entity
 {
 
-    public function __construct(
-        protected ?int $id = null,
-        protected ?int $date = '',
-        protected ?float $totalPrice = '',
-        protected ?User $user = null,
-        protected ?Ads $ads = null
-    ) {}
+    protected ?int $id = null;
+    protected ?string $date = '';
+    protected ?float $totalPrice = 0;
+    protected ?User $user = null;
+    protected ?Ads $ads = null;
 
 
     /**
@@ -35,7 +33,7 @@ class Transaction extends Entity
     /**
      * Get the value of date
      */
-    public function getDate(): ?int
+    public function getDate(): ?string
     {
         return $this->date;
     }
@@ -43,7 +41,7 @@ class Transaction extends Entity
     /**
      * Set the value of date
      */
-    public function setDate(?int $date): self
+    public function setDate(?string $date): self
     {
         $this->date = $date;
 
@@ -105,12 +103,22 @@ class Transaction extends Entity
         return $this;
     }
 
-    public static function createAndHydrate(array $data): static
+    public function hydrate(array $data)
     {
-        $transaction = new self();
-        $transaction->setId($data['id']);
-        $transaction->setDate($data['date']);
-        $transaction->setTotalPrice($data['totalPrice']);
-        return $transaction;
+        parent::hydrate($data);
+        if (isset($data['user_id'])) {
+            $user = new User();
+            $user->setId($data['user_id']);
+            $user->setUserName($data['user_name']);
+            $user->setEmail($data['email']);
+            $user->setPassword($data['password']);
+            $this->setUser($user);
+        }
+        if (isset($data['ads_id'])) {
+            $ads = new Ads();
+            $ads->setId($data['ads_id']);
+            $ads->setTitle($data['title']);
+            $this->setAds($ads);
+        }
     }
 }
