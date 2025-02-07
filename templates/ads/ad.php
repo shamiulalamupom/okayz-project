@@ -1,5 +1,9 @@
 <?php
 require_once _ROOTPATH_ . '/templates/header.php';
+
+use App\Entity\User;
+use App\Tools\NavigationTools;
+var_dump($_SESSION, $ad->getUser()->getId());
 ?>
 
 <div class="row align-items-center">
@@ -10,6 +14,12 @@ require_once _ROOTPATH_ . '/templates/header.php';
         <p class="text-muted"><?= nl2br(htmlspecialchars($ad->getDescription())); ?></p>
         <!-- For Testing Purposes later will remove -->
         <p class="text-muted"><?= htmlspecialchars($ad->getCreatorName()); ?></p>
+        <?php if(User::isLogged() && User::getCurrentUserId() === $ad->getUser()->getId()): ?>
+            <a href="<?= NavigationTools::makeRoute('ads', 'edit') ?>&id=<?= $ad->getId() ?>" class="btn btn-warning">Edit</a>
+           <a href="<?= NavigationTools::makeRoute('ads', 'delete') ?>&id=<?= $ad->getId() ?>" class="btn btn-danger">Delete</a>
+        <?php else: ?>
+            <a href="<?= NavigationTools::makeRoute('ads', 'buy') ?>" class="btn btn-primary">Buy</a>
+        <?php endif; ?>
     </div>
     <!-- Image Section -->
     <div class="col-md-6 text-center">
