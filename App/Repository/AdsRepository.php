@@ -84,8 +84,8 @@ class AdsRepository extends Repository
             $query->bindValue(':id', $ads->getId(), $this->pdo::PARAM_INT);
         } else {
             $query = $this->pdo->prepare(
-                'INSERT INTO ads (title, description, price, image) 
-                                                    VALUES (:title, :description, :price, :image)'
+                'INSERT INTO ads (title, description, price, image, user_id, category_id) 
+                                                    VALUES (:title, :description, :price, :image, :user_id, :category_id)'
             );
         }
 
@@ -93,6 +93,8 @@ class AdsRepository extends Repository
         $query->bindValue(':description', $ads->getDescription(), $this->pdo::PARAM_STR);
         $query->bindValue(':price', $ads->getPrice(), $this->pdo::PARAM_INT);
         $query->bindValue(':image', $ads->getImage(), $this->pdo::PARAM_STR);
+        $query->bindValue(':user_id', $ads->getUser()->getId(), $this->pdo::PARAM_INT);
+        $query->bindValue(':category_id', $ads->getCategory()->getId(), $this->pdo::PARAM_INT);
 
 
         return $query->execute();
