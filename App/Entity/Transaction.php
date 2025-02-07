@@ -87,6 +87,23 @@ class Transaction extends Entity
         return $this;
     }
 
+    /**
+     * Get the value of ads
+     */
+    public function getAds(): ?Ads
+    {
+        return $this->ads;
+    }
+
+    /**
+     * Set the value of ads
+     */
+    public function setAds(?Ads $ads): self
+    {
+        $this->ads = $ads;
+
+        return $this;
+    }
 
     public static function createAndHydrate(array $data): static
     {
