@@ -6,16 +6,13 @@ use App\Repository\UserRepository;
 
 class Ads extends Entity
 {
-
-    public function __construct(
-        protected ?int $id = null,
-        protected ?string $title = '',
-        protected ?string $description = '',
-        protected ?float $price = 0,
-        protected ?string $image = '',
-        protected ?User $user = null,
-        protected ?Categories $category = null
-    ) {}
+    protected ?int $id = null;
+    protected ?string $title = '';
+    protected ?string $description = '';
+    protected ?float $price = 0;
+    protected ?string $image = '';
+    protected ?User $user = null;
+    protected ?Categories $category = null;
 
     /**
      * Get the value of id
@@ -84,8 +81,11 @@ class Ads extends Entity
      */
     public function setPrice(?float $price): self
     {
+        if ($price < 0) {
+            throw new \InvalidArgumentException("Price cannot be negative.");
+        }
         $this->price = $price;
-
+    
         return $this;
     }
 
@@ -125,6 +125,16 @@ class Ads extends Entity
         return $this;
     }
 
+    public function getCreatorName(): string
+    {
+        $user = $this->getUser();
+        if (!empty($user)) {
+            return $user->getUserName();
+        } else {
+            return 'Unknown';
+        }
+    }
+
     /**
      * Get the value of category
      */
@@ -149,29 +159,28 @@ class Ads extends Entity
         if (!empty($this->getImage())) {
             return _ASSETS_IMAGES_FOLDER_ . $this->getImage();
         } else {
-            return _ASSETS_IMAGES_FOLDER_ . 'EmptyCart.jpeg';
+            return _ASSETS_DEFAULTS_FOLDER_ . 'EmptyCart.jpeg';
         }
     }
 
-    public function toArray(): array
+    public function hydrate(array $data)
     {
-        return [
-            'id' => $this->getId(),
-            'title' => $this->getTitle(),
-            'description' => $this->getDescription(),
-            'price' => $this->getPrice(),
-            'image' => $this->getImage()
-        ];
-    }
+        parent::hydrate($data);
 
-    public static function createAndHydrate(array $data): static
-    {
-        $ads = new self();
-        $ads->setId($data['id']);
-        $ads->setTitle($data['title']);
-        $ads->setDescription($data['description']);
-        $ads->setPrice($data['price']);
-        $ads->setImage($data['image']);
-        return $ads;
+        if (isset($data['user_id'])) {
+            $user = new User();
+            $user->setId($data['user_id']);
+            $user->setUserName($data['user_name']);
+            $user->setEmail($data['email']);
+            $user->setPassword($data['password']);
+            $this->setUser($user);
+        }
+
+        if (isset($data['category_id'])) {
+            $category = new Categories();
+            $category->setId($data['category_id']);
+            $category->setType($data['type']);
+            $this->setCategory($category);
+        }
     }
 }

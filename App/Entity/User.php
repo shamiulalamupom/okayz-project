@@ -126,4 +126,9 @@ class User extends Entity
     {
         return (isset($_SESSION['user']) && isset($_SESSION['user']['id'])) ? $_SESSION['user']['id']: false;
     }
+
+    public static function getCurrentUser(): User|bool
+    {
+        return (isset($_SESSION['user']) && isset($_SESSION['user']['id'])) ? User::createAndHydrate($_SESSION['user']): false;
+    }
 }

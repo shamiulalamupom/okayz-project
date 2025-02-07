@@ -7,10 +7,8 @@ namespace App\Entity;
 class Categories extends Entity
 {
 
-    public function __construct(
-        protected ?int $id = null,
-        protected ?string $type = ''
-    ) {}
+    protected ?int $id = null;
+    protected ?string $type = '';
 
 
 
@@ -48,13 +46,5 @@ class Categories extends Entity
         $this->type = $type;
 
         return $this;
-    }
-
-    public static function createAndHydrate(array $data): static
-    {
-        $category = new self();
-        $category->setId($data['id']);
-        $category->setType($data['title']);
-        return $category;
     }
 }
