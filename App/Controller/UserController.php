@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Repository\UserRepository;
+use App\Repository\AdsRepository;
 use App\Entity\User;
 
 
@@ -58,8 +59,11 @@ class UserController extends Controller
                 if (empty($errors)) {
                     $userRepository = new UserRepository();
                     $userRepository->persist($user);
+                    $adsRepository = new AdsRepository();
+                    $ads = $adsRepository->findAll(3);
                     $this->render('page/home', [
-                        'messages' => ['User registered successfully']
+                        'messages' => ['User registered successfully'],
+                        'ads' => $ads
                     ]);
                     return;
                 }
