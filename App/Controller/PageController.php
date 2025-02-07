@@ -15,6 +15,10 @@ class PageController extends Controller
                         //charger controleur home
                         $this->home();
                         break;
+                    case 'legals':
+                        //charger controleur legals
+                        $this->legals();
+                        break;
                     default:
                         throw new \Exception("This action does not exist: " . $_GET['action']);
                         break;
@@ -37,5 +41,10 @@ class PageController extends Controller
         $this->render('page/home', [
             'ads' => $ads
         ]);
+    }
+
+    protected function legals()
+    {
+        $this->render('page/legals');
     }
 }
