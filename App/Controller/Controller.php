@@ -23,6 +23,11 @@ class Controller
                         $controller = new AdsController();
                         $controller->route();
                         break;
+                    case 'page':
+                        //charger controleur page
+                        $controller = new PageController();
+                        $controller->route();
+                        break;
                     default:
                         throw new \Exception("Controller does not exist");
                         break;
