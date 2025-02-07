@@ -3,7 +3,6 @@ require_once _ROOTPATH_ . '/templates/header.php';
 
 use App\Entity\User;
 use App\Tools\NavigationTools;
-var_dump($_SESSION, $ad->getUser()->getId());
 ?>
 
 <div class="row align-items-center">
