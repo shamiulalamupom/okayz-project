@@ -25,6 +25,9 @@ class AdsRepository extends Repository
                 } elseif($key === 'category' && $value !== "") {
                     $filterConditions[] = "category.type = :$key";
                     $filterValues[":category.type"] = $value;
+                } elseif($key === 'search' && $value !== "") {
+                    $filterConditions[] = "ads.title LIKE :$key OR ads.description LIKE :$key";
+                    $filterValues[":$key"] = "%$value%";
                 }
             }
         }

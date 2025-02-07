@@ -58,6 +58,10 @@ class AdsController extends Controller
             if (isset($_POST['max_price'])) {
                 $filters['max_price'] = (int)$_POST['max_price'];
             }
+            if (isset($_POST['search'])) {
+                $filters['search'] = $_POST['search'];
+            }
+
             $adsRepository = new AdsRepository();
             $ads = $adsRepository->findAll(null, $filters);
             $categoriesRepository = new CategoryRepository();
@@ -136,10 +140,7 @@ class AdsController extends Controller
                     $adsRepository = new AdsRepository();
                     $adsRepository->persist($ad);
                     $ads = $adsRepository->findAll();
-                    $this->render('page/annonces', [
-                        'messages' => ['Ad created successfully'],
-                        'ads' => $ads
-                    ]);
+                    header('Location: index.php?controller=ads&action=annonces');
                     return;
                 }
 
