@@ -2,7 +2,8 @@
 
 use App\Tools\NavigationTools;
 
-require_once _ROOTPATH_ . '/templates/header.php'; ?>
+require_once _ROOTPATH_ . '/templates/header.php';
+?>
 
 <main>
     <div class="row">
@@ -48,6 +49,15 @@ require_once _ROOTPATH_ . '/templates/header.php'; ?>
                     <?php require _ROOTPATH_ . '/templates/ads/ad_card.php'; ?>
                 <?php endforeach; ?>
             </div>
+            <nav aria-label="Page navigation">
+                <ul class="pagination justify-content-center">
+                    <?php for ($i = 1; $i <= ceil($adsCount / $limit); $i++) : ?>
+                        <li style="<?= ($i == $currentPage) ? 'background-color: #f64d45; border-radius: 10px;' : '' ?>" class="page-item <?= ($i == $currentPage) ? 'active' : '' ?>">
+                            <a class="page-link" href="<?= NavigationTools::makeRoute('ads', 'annonces'); ?>&page=<?= $i ?>"><?= $i ?></a>
+                        </li>
+                    <?php endfor; ?>
+                </ul>
+            </nav>
         </div>
 </main>
 

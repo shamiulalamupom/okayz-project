@@ -9,7 +9,7 @@ use App\Db\Database;
 class AdsRepository extends Repository
 {
 
-    public function findAll(?int $limit = null, ?array $filters = null): array
+    public function findAll(?int $limit = null, ?int $offset = null, ?array $filters = null): array
     {
         $filterConditions = [];
         $filterValues = [];
@@ -34,11 +34,8 @@ class AdsRepository extends Repository
 
         $filterString = $filterConditions ? 'WHERE ' . implode(' AND ', $filterConditions) : '';
 
-        if ($limit) {
-            $limit = "LIMIT $limit";
-        } else {
-            $limit = "";
-        }
+        $limitString = $limit ? "LIMIT :limit" : "";
+        $offsetString = $offset ? "OFFSET :offset" : "";
 
         $query = $this->pdo->prepare("SELECT ads.id, ads.title, ads.description, ads.price, ads.image, ads.creation_date, 
                         user.id AS user_id, user.user_name, user.email, user.password, 
@@ -48,9 +45,15 @@ class AdsRepository extends Repository
                         JOIN category ON ads.category_id = category.id
                         $filterString
                         ORDER BY ads.creation_date DESC 
-                        $limit");
+                        $limitString $offsetString");
         foreach ($filterValues as $key => $value) {
             $query->bindValue($key, $value);
+        }
+        if ($limit) {
+            $query->bindValue(':limit', $limit, $this->pdo::PARAM_INT);
+        }
+        if ($offset) {
+            $query->bindValue(':offset', $offset, $this->pdo::PARAM_INT);
         }
         $query->execute();
         $ads = $query->fetchAll($this->pdo::FETCH_ASSOC);

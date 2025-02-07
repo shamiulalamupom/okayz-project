@@ -59,16 +59,23 @@ class AdsController extends Controller
                 $filters['max_price'] = (int)$_POST['max_price'];
             }
             if (isset($_POST['search'])) {
-                $filters['search'] = $_POST['search'];
+                $filters['search'] = $_GET['search'];
             }
 
+            $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+            $offset = ($page - 1) * _ITEM_PER_PAGE_;
+
             $adsRepository = new AdsRepository();
-            $ads = $adsRepository->findAll(null, $filters);
+            $ads = $adsRepository->findAll(_ITEM_PER_PAGE_, $offset, $filters);
+            $adsCount = count($adsRepository->findAll(null, null, $filters));
             $categoriesRepository = new CategoryRepository();
             $categories = $categoriesRepository->findAll();
             $this->render('page/annonces', [
                 'ads' => $ads,
-                'categories' => $categories
+                'adsCount' => $adsCount,
+                'categories' => $categories,
+                'currentPage' => $page,
+                'limit' => _ITEM_PER_PAGE_
             ]);
         } catch (\Exception $e) {
             $this->render('errors/default', [
