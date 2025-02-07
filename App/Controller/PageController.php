@@ -32,7 +32,7 @@ class PageController extends Controller
     protected function home()
     {
         $adsRepository = new AdsRepository;
-        $ads = $adsRepository->findAll();
+        $ads = $adsRepository->findAll(3);
 
         $this->render('page/home', [
             'ads' => $ads

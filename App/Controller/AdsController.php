@@ -33,6 +33,20 @@ class AdsController extends Controller
         }
     }
 
+    protected function annonces()
+    {
+        try {
+            $adsRepository = new AdsRepository();
+            $ads = $adsRepository->findAll();
+            $this->render('page/annonces', [
+                'ads' => $ads
+            ]);
+        } catch (\Exception $e) {
+            $this->render('errors/default', [
+                'error' => $e->getMessage()
+            ]);
+        }
+    }
 
     protected function ad()
     {
@@ -42,7 +56,7 @@ class AdsController extends Controller
             }
 
             $adsRepository = new AdsRepository();
-            $ad = $adsRepository->findById($_GET['id']);
+            $ad = $adsRepository->findOneById($_GET['id']);
 
             if (!$ad) {
                 throw new \Exception("Ad not found.");
@@ -50,22 +64,6 @@ class AdsController extends Controller
 
             $this->render('ads/ad', [
                 'ad' => $ad
-            ]);
-        } catch (\Exception $e) {
-            $this->render('errors/default', [
-                'error' => $e->getMessage()
-            ]);
-        }
-    }
-
-    protected function annonces()
-    {
-        try {
-            $adsRepository = new AdsRepository();
-            $ads = $adsRepository->findAll();
-            var_dump($ads);
-            $this->render('page/annonces', [
-                'ads' => $ads
             ]);
         } catch (\Exception $e) {
             $this->render('errors/default', [

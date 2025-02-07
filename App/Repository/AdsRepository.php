@@ -2,6 +2,7 @@
 
 namespace App\Repository;
 
+use App\Entity\Entity;
 use App\Entity\Ads;
 use App\Db\Database;
 
@@ -16,10 +17,14 @@ class AdsRepository extends Repository
             $limit = "";
         }
 
-        $query = $this->pdo->prepare("SELECT ads.*, user.*, category.* FROM ads 
+        $query = $this->pdo->prepare("SELECT ads.id, ads.title, ads.description, ads.price, ads.image, ads.creation_date, 
+                        user.id AS user_id, user.user_name, user.email, user.password, 
+                        category.id AS category_id, category.type
+                        FROM ads
                         JOIN user ON ads.user_id = user.id
                         JOIN category ON ads.category_id = category.id
-                        ORDER BY ads.id ASC $limit");
+                        ORDER BY ads.creation_date DESC 
+                        $limit");
         $query->execute();
         $ads = $query->fetchAll($this->pdo::FETCH_ASSOC);
         $adsList = [];
@@ -31,43 +36,38 @@ class AdsRepository extends Repository
 
     public function findOneById(int $id)
     {
-        $query = self::$pdo->prepare("SELECT ads.*, user.*, category.* FROM ads 
+        $query = $this->pdo->prepare("SELECT ads.id, ads.title, ads.description, ads.price, ads.image, ads.creation_date, 
+                        user.id AS user_id, user.user_name, user.email, user.password, 
+                        category.id AS category_id, category.type
+                        FROM ads
                         JOIN user ON ads.user_id = user.id
                         JOIN category ON ads.category_id = category.id
                         WHERE ads.id = :id");
-        $query->bindParam(':id', $id, \PDO::PARAM_INT);
-        $query->execute();
-        $ad = $query->fetch(\PDO::FETCH_ASSOC);
-        var_dump($ad);
-        if ($ad) {
-            return Ads::createAndHydrate($ad);
-        } else {
-            return false;
-        }
-    }
-
-
-    public function findOneByCategory(string $category)
-    {
-        $query = $this->pdo->prepare("SELECT * FROM ads WHERE category = :category");
-        $query->bindParam(':category', $category, $this->pdo::PARAM_STR);
-        $query->execute();
-        $ads = $query->fetch($this->pdo::FETCH_ASSOC);
-        if ($ads) {
-            return Ads::createAndHydrate($ads);
-        } else {
-            return false;
-        }
-    }
-
-    public function findById(int $id)
-    {
-        $query = $this->pdo->prepare("SELECT * FROM ads WHERE id = :id");
         $query->bindParam(':id', $id, $this->pdo::PARAM_INT);
         $query->execute();
         $ad = $query->fetch($this->pdo::FETCH_ASSOC);
         if ($ad) {
             return Ads::createAndHydrate($ad);
+        } else {
+            return false;
+        }
+    }
+
+
+    public function findOneByCategory(int $category_id)
+    {
+        $query = $this->pdo->prepare("SELECT ads.id, ads.title, ads.description, ads.price, ads.image, ads.creation_date, 
+                        user.id AS user_id, user.user_name, user.email, user.password, 
+                        category.id AS category_id, category.type
+                        FROM ads
+                        JOIN user ON ads.user_id = user.id
+                        JOIN category ON ads.category_id = category.id
+                        WHERE category_id = :category_id");
+        $query->bindParam(':category_id', $category_id, $this->pdo::PARAM_INT);
+        $query->execute();
+        $ads = $query->fetch($this->pdo::FETCH_ASSOC);
+        if ($ads) {
+            return Ads::createAndHydrate($ads);
         } else {
             return false;
         }
@@ -110,17 +110,4 @@ class AdsRepository extends Repository
             return false;
         }
     }
-
-    // public function findLatestThree(): array
-    // {
-    //     $query = $this->pdo->prepare("SELECT * FROM ads ORDER BY id DESC LIMIT 3");
-    //     $ads = $query->fetchAll($this->pdo::FETCH_ASSOC);
-
-    //     $adsList = [];
-    //     foreach ($ads as $ad) {
-    //         $adsList[] = Ads::createAndHydrate($ad);
-    //     }
-
-    //     return $adsList;
-    // }
 }
