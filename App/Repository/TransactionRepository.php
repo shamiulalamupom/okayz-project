@@ -40,13 +40,14 @@ class TransactionRepository extends Repository
             $query->bindValue(':id', $transaction->getId(), $this->pdo::PARAM_INT);
         } else {
             $query = $this->pdo->prepare(
-                'INSERT INTO transaction (date, ads_id, category_id) 
-                                                    VALUES (:date, :ads_id, :category_id)'
+                'INSERT INTO transaction (date, ads_id, user_id, total_price) 
+                                                    VALUES (:date, :ads_id, :user_id, :total_price)'
             );
         }
         $query->bindValue(':date', $transaction->getDate(), $this->pdo::PARAM_STR);
-        $query->bindValue(':ads_id', $transaction->getId(), $this->pdo::PARAM_STR);
-        $query->bindValue(':category_id', $transaction->getId(), $this->pdo::PARAM_STR);
+        $query->bindValue(':ads_id', $transaction->getAds()->getId(), $this->pdo::PARAM_INT);
+        $query->bindValue(':user_id', $transaction->getUser()->getId(), $this->pdo::PARAM_INT);
+        $query->bindValue(':total_price', $transaction->getTotalPrice(), $this->pdo::PARAM_STR);
         return $query->execute();
     }
 

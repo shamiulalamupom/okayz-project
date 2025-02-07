@@ -18,7 +18,7 @@ var_dump($_SESSION, $ad->getUser()->getId());
             <a href="<?= NavigationTools::makeRoute('ads', 'edit') ?>&id=<?= $ad->getId() ?>" class="btn btn-warning">Edit</a>
            <a href="<?= NavigationTools::makeRoute('ads', 'delete') ?>&id=<?= $ad->getId() ?>" class="btn btn-danger">Delete</a>
         <?php else: ?>
-            <a href="<?= NavigationTools::makeRoute('ads', 'buy') ?>" class="btn btn-primary">Buy</a>
+            <a href="<?= NavigationTools::makeRoute('ads', 'buy') ?>&id=<?= $ad->getId() ?>" class="btn btn-primary">Buy</a>
         <?php endif; ?>
     </div>
     <!-- Image Section -->

@@ -8,6 +8,8 @@ use App\Repository\CategoryRepository;
 use App\Entity\User;
 use App\Entity\Ads;
 use App\Entity\Category;
+use App\Repository\TransactionRepository;
+use App\Entity\Transaction;
 use App\Tools\FileTools;
 
 class AdsController extends Controller
@@ -271,24 +273,34 @@ class AdsController extends Controller
     protected function buy() {
         try {
             if (!User::isLogged()) {
-            throw new \Exception("You must be logged in to buy an ad.");
+                throw new \Exception("You must be logged in to buy an ad.");
             }
 
             if (!isset($_GET['id']) || empty($_GET['id'])) {
-            throw new \Exception("Ad ID is missing.");
+                throw new \Exception("Ad ID is missing.");
             }
 
             $adsRepository = new AdsRepository();
             $ad = $adsRepository->findOneById($_GET['id']);
+            $ads = $adsRepository->findAll(3);
+
+            $transactionRepository = new TransactionRepository();
+            $transaction = new Transaction();
+            $transaction->setAds($ad);
+            $transaction->setUser(User::getCurrentUser());
+            $transaction->setDate(date('Y-m-d H:i:s'));
+            $transaction->setTotalPrice($ad->getPrice());
+
 
             if (!$ad) {
-            throw new \Exception("Ad not found.");
+                throw new \Exception("Ad not found.");
             }
 
-            
-
-            $adsRepository->persist($ad);
-            header('Location: index.php?controller=ads&action=annonces');
+            $transactionRepository->persist($transaction);
+            $this->render('page/home', [
+                'messages' => ['Transaction successful'],
+                'ads' => $ads
+            ]);
         } catch (\Exception $e) {
             $this->render('errors/default', [
             'error' => $e->getMessage()
