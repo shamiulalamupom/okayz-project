@@ -46,10 +46,36 @@ class AdsController extends Controller
     protected function annonces()
     {
         try {
+            $filters = [];
+
+            // Assuming the form uses GET method
+            if (isset($_POST['category'])) {
+                $filters['type'] = $_POST['category'];
+            }
+            if (isset($_POST['min_price'])) {
+                $filters['min_price'] = (int)$_POST['min_price'];
+            }
+            if (isset($_POST['max_price'])) {
+                $filters['max_price'] = (int)$_POST['max_price'];
+            }
+            if (isset($_POST['search'])) {
+                $filters['search'] = $_GET['search'];
+            }
+
+            $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+            $offset = ($page - 1) * _ITEM_PER_PAGE_;
+
             $adsRepository = new AdsRepository();
-            $ads = $adsRepository->findAll();
+            $ads = $adsRepository->findAll(_ITEM_PER_PAGE_, $offset, $filters);
+            $adsCount = count($adsRepository->findAll(null, null, $filters));
+            $categoriesRepository = new CategoryRepository();
+            $categories = $categoriesRepository->findAll();
             $this->render('page/annonces', [
-                'ads' => $ads
+                'ads' => $ads,
+                'adsCount' => $adsCount,
+                'categories' => $categories,
+                'currentPage' => $page,
+                'limit' => _ITEM_PER_PAGE_
             ]);
         } catch (\Exception $e) {
             $this->render('errors/default', [
@@ -121,10 +147,7 @@ class AdsController extends Controller
                     $adsRepository = new AdsRepository();
                     $adsRepository->persist($ad);
                     $ads = $adsRepository->findAll();
-                    $this->render('page/annonces', [
-                        'messages' => ['Ad created successfully'],
-                        'ads' => $ads
-                    ]);
+                    header('Location: index.php?controller=ads&action=annonces');
                     return;
                 }
 
