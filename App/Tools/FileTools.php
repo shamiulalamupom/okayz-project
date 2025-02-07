@@ -16,6 +16,11 @@ class FileTools
                 $fileName = StringTools::slugify(basename($file["name"]));
                 $fileName = uniqid() . '-' . $fileName;
 
+                $fullDestinationPath = _ROOTPATH_ . $destinationPath;
+                if (!is_dir($fullDestinationPath)) {
+                    mkdir($fullDestinationPath, 0777, true);
+                }
+
                 if (move_uploaded_file($file["tmp_name"], _ROOTPATH_.$destinationPath . $fileName)) {
                     if ($oldFileName) {
                         unlink($destinationPath . $oldFileName);

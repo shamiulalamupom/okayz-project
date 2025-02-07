@@ -159,7 +159,7 @@ class Ads extends Entity
         if (!empty($this->getImage())) {
             return _ASSETS_IMAGES_FOLDER_ . $this->getImage();
         } else {
-            return _ASSETS_IMAGES_FOLDER_ . 'EmptyCart.jpeg';
+            return _ASSETS_DEFAULTS_FOLDER_ . 'EmptyCart.jpeg';
         }
     }
 

@@ -8,6 +8,7 @@ use App\Repository\CategoryRepository;
 use App\Entity\User;
 use App\Entity\Ads;
 use App\Entity\Category;
+use App\Tools\FileTools;
 
 class AdsController extends Controller
 {
@@ -93,10 +94,11 @@ class AdsController extends Controller
             $categories = $categoriesRepository->findAll();
 
             if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+                $image = FileTools::uploadImage(_ASSETS_UPLOAD_FOLDER_, $_FILES['image']);
                 $ad->setTitle($_POST['title']);
                 $ad->setDescription($_POST['description']);
                 $ad->setPrice($_POST['price']);
-                $ad->setImage($_POST['image']);
+                $ad->setImage($image['fileName']);
                 $ad->setUser(User::getCurrentUser());
                 $ad->setCategory($categoriesRepository->findOneByCategoryType($_POST['category']));
 
@@ -129,7 +131,8 @@ class AdsController extends Controller
                 $this->render('ads/create_ad', [
                     'ad' => $ad,
                     'pageTitle' => 'Create Ad',
-                    'errors' => $errors
+                    'errors' => $errors,
+                    'categories' => $categories
                 ]);
             }
 
